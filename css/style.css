@@ -12,7 +12,14 @@ input
 	text-align: center;
 	color: white;	
 }
-
+h1
+{
+	position: absolute;
+	font-family: helvetica;
+	line-height: 1.5em;
+	color: white;
+	padding: 2%;
+}
 #browserMessage
 {
 	position: absolute;
