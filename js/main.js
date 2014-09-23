@@ -14,7 +14,7 @@ var init = function()
 	canvasElement.height = window.innerHeight;
 	context = canvasElement.getContext("2d");
 	console.log(audioSource);
-	audioSource.playStream('song.mp3');
+	audioSource.playStream('song/song.mp3');
 
 	canvasElement.onmousemove = function (e)
 	{
