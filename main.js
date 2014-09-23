@@ -1,0 +1,119 @@
+
+
+
+// reference http://www.michaelbromley.co.uk/experiments/soundcloud-vis/#d-jahsta/d-jahsta-system-forthcoming
+var canvasElement, context, audioSource,mousePos = {x:100,y:100};
+var init = function()
+{
+	console.log("init test");
+	audioSource = new AudioReader('player');
+	canvasElement = document.getElementById('canvas');
+	canvasElement.style.width = window.innerWidth;
+	canvasElement.style.height = window.innerHeight;
+	canvasElement.width = window.innerWidth;
+	canvasElement.height = window.innerHeight;
+	context = canvasElement.getContext("2d");
+	console.log(audioSource);
+	audioSource.playStream('song.mp3');
+
+	canvasElement.onmousemove = function (e)
+	{
+		mousePos = {x:e.clientX,y:e.clientY};
+			
+	};
+
+	animate();
+};
+
+var AudioReader = function(audioElement) {
+    var player = document.getElementById(audioElement);
+    var self = this;
+    var analyser;
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256; // see - there is that 'fft' thing. 
+    var source = audioCtx.createMediaElementSource(player); 
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    var sampleAudioStream = function() {
+        analyser.getByteFrequencyData(self.streamData);
+        var total = 0;
+        for (var i = 0; i < 80; i++) { 
+            total += self.streamData[i];
+        }
+        self.volume = total;
+    };
+    setInterval(sampleAudioStream, 20);
+    this.volume = 0;
+    this.streamData = new Uint8Array(128); 
+    this.playStream = function(streamUrl) {
+        player.setAttribute('src', streamUrl);
+        player.play();
+    }
+};
+/*
+var Particule = function(x,y,dx,dy,speed)
+{
+    this.ox = window.innerWidth/2;
+    this.oy = window.innerHeight/2;
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.speed = speed;
+
+
+	this.update = function(val)
+	{
+        this.x = x;
+       
+        
+	};
+    this.draw = function(context)
+    {
+        context.beginPath();
+        context.moveTo(this.ox+this.x,this.oy);
+        context.lineTo(this.x,this.y);
+        context.stroke();
+    };
+};
+*/
+var drawBgCanvas = function()
+{
+    grd=context.createRadialGradient(window.innerWidth/2,window.innerHeight/2,window.innerWidth,window.innerWidth/2,window.innerWidth/2,100);
+    grd.addColorStop(0,"#000000");
+    grd.addColorStop(1,"#24022f");
+    context.fillStyle=grd;
+    context.fillRect(0,0,window.innerWidth,window.innerHeight);
+};
+
+var drawBass = function(val)
+{
+    context.beginPath();
+    context.fillStyle = 'rgb(' + 250 + ', ' + 50 + ', ' + 50 + ')';
+    context.arc(Math.random()*window.innerWidth,Math.random()*window.innerHeight,val,0,2*Math.PI);
+    context.fill();  
+
+}
+
+var animate = function() 
+{
+    canvas.width = canvas.width;
+    drawBgCanvas();
+
+    for(bin = 0; bin < audioSource.streamData.length; bin ++) {
+        var val = audioSource.streamData[bin];
+        var red = val;
+        var green = 255 - val;
+        var blue = val; 
+		context.beginPath();
+		context.strokeStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+		context.arc(window.innerWidth/2,window.innerHeight/2,val,0,2*Math.PI);
+		context.stroke();
+        //console.log(val);
+        
+       
+    }
+
+    requestAnimationFrame(animate);
+};
