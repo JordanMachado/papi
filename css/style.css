@@ -12,3 +12,14 @@ input
 	text-align: center;
 	color: white;	
 }
+
+#browserMessage
+{
+	position: absolute;
+	top:5%;
+	width: 100%;
+	text-align: center;
+	color: white;
+	display: none;
+	font-size: 21pt;
+}

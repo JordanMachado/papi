@@ -3,28 +3,39 @@
 
 // reference http://www.michaelbromley.co.uk/experiments/soundcloud-vis/#d-jahsta/d-jahsta-system-forthcoming
 var canvasElement, context, audioSource,mousePos = {x:100,y:100};
+
+var checkCompatibility = function()
+{
+    if(Detectizr.browser.name != "chrome")
+    {
+          browserMessage = document.getElementById("browserMessage");
+          browserMessage.innerHTML = "Vous utilisez actuellement "+Detectizr.browser.name+" malheuresement l'application est disponible seulement sur google Chrome.";
+          browserMessage.style.display = "block";   
+    }
+    console.log("checkCompatibility ...");
+};
+
 var init = function()
 {
-	console.log("init test");
+    console.log("init");
+
+    checkCompatibility();
 	audioSource = new AudioReader('player');
 	canvasElement = document.getElementById('canvas');
-	canvasElement.style.width = window.innerWidth;
-	canvasElement.style.height = window.innerHeight;
-	canvasElement.width = window.innerWidth;
-	canvasElement.height = window.innerHeight;
+	resizeCanvas();
+	
 	context = canvasElement.getContext("2d");
-	console.log(audioSource);
 	audioSource.playStream('song/song.mp3');
-
-	canvasElement.onmousemove = function (e)
-	{
-		mousePos = {x:e.clientX,y:e.clientY};
-			
-	};
+    window.addEventListener("resize",resizeCanvas,false);
 
 	animate();
 };
 
+var resizeCanvas = function()
+{
+    canvasElement.width = window.innerWidth;
+    canvasElement.height = window.innerHeight;
+}
 var AudioReader = function(audioElement) {
     var player = document.getElementById(audioElement);
     var self = this;
