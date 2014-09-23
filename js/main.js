@@ -23,7 +23,6 @@ var init = function()
 	audioSource = new AudioReader('player');
 	canvasElement = document.getElementById('canvas');
 	resizeCanvas();
-	
 	context = canvasElement.getContext("2d");
 	audioSource.playStream('song/song.mp3');
     window.addEventListener("resize",resizeCanvas,false);
@@ -91,39 +90,33 @@ var Particule = function(x,y,dx,dy,speed)
 */
 var drawBgCanvas = function()
 {
-    grd=context.createRadialGradient(window.innerWidth/2,window.innerHeight/2,window.innerWidth,window.innerWidth/2,window.innerWidth/2,100);
+    grd=context.createRadialGradient(window.innerWidth/2,window.innerHeight/2,window.innerWidth/2,window.innerWidth/2,window.innerWidth/2,300);
     grd.addColorStop(0,"#000000");
     grd.addColorStop(1,"#24022f");
     context.fillStyle=grd;
     context.fillRect(0,0,window.innerWidth,window.innerHeight);
 };
 
-var drawBass = function(val)
+var drawBass = function(red,green,blue,val)
 {
     context.beginPath();
-    context.fillStyle = 'rgb(' + 250 + ', ' + 50 + ', ' + 50 + ')';
-    context.arc(Math.random()*window.innerWidth,Math.random()*window.innerHeight,val,0,2*Math.PI);
-    context.fill();  
-
+    context.strokeStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+    context.arc(window.innerWidth/2,window.innerHeight/2,val,0,2*Math.PI);
+    context.stroke();
 }
 
 var animate = function() 
 {
     canvas.width = canvas.width;
+   
     drawBgCanvas();
-
-    for(bin = 0; bin < audioSource.streamData.length; bin ++) {
+    for(bin = 0; bin < audioSource.streamData.length; bin ++) 
+    {
         var val = audioSource.streamData[bin];
         var red = val;
         var green = 255 - val;
         var blue = val; 
-		context.beginPath();
-		context.strokeStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-		context.arc(window.innerWidth/2,window.innerHeight/2,val,0,2*Math.PI);
-		context.stroke();
-        //console.log(val);
-        
-       
+        drawBass(red,green,blue,val)
     }
 
     requestAnimationFrame(animate);
