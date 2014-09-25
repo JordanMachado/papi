@@ -2,7 +2,7 @@
 
 
 // reference http://www.michaelbromley.co.uk/experiments/soundcloud-vis/#d-jahsta/d-jahsta-system-forthcoming
-var canvasElement, context, audioSource,mousePos = {x:100,y:100};
+var canvasElement, context, audioSource;
 
 var checkCompatibility = function()
 {
@@ -18,23 +18,34 @@ var checkCompatibility = function()
 var init = function()
 {
     console.log("init");
-
     checkCompatibility();
 	audioSource = new AudioReader('player');
 	canvasElement = document.getElementById('canvas');
 	resizeCanvas();
 	context = canvasElement.getContext("2d");
-	audioSource.playStream('song/song.mp3');
+	audioSource.playStream('song/MAKJ-Crunch.mp3');
+    mousePos = {x:window.innerWidth/2,y:window.innerHeight/2}
+
+    /* listeners */
     window.addEventListener("resize",resizeCanvas,false);
+    window.addEventListener("mousemove",updateMousePos,false); 
+
 
 	animate();
 };
+
+var updateMousePos = function(e)
+{
+    mousePos.x = e.clientX;
+    mousePos.y = e.clientY;
+}
 
 var resizeCanvas = function()
 {
     canvasElement.width = window.innerWidth;
     canvasElement.height = window.innerHeight;
 }
+
 var AudioReader = function(audioElement) {
     var player = document.getElementById(audioElement);
     var self = this;
@@ -61,33 +72,7 @@ var AudioReader = function(audioElement) {
         player.play();
     }
 };
-/*
-var Particule = function(x,y,dx,dy,speed)
-{
-    this.ox = window.innerWidth/2;
-    this.oy = window.innerHeight/2;
-    this.x = x;
-    this.y = y;
-    this.dx = dx;
-    this.dy = dy;
-    this.speed = speed;
 
-
-	this.update = function(val)
-	{
-        this.x = x;
-       
-        
-	};
-    this.draw = function(context)
-    {
-        context.beginPath();
-        context.moveTo(this.ox+this.x,this.oy);
-        context.lineTo(this.x,this.y);
-        context.stroke();
-    };
-};
-*/
 var drawBgCanvas = function()
 {
     grd=context.createRadialGradient(window.innerWidth/2,window.innerHeight/2,window.innerWidth/2,window.innerWidth/2,window.innerWidth/2,300);
@@ -101,7 +86,28 @@ var drawBass = function(red,green,blue,val)
 {
     context.beginPath();
     context.strokeStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-    context.arc(window.innerWidth/2,window.innerHeight/2,val,0,2*Math.PI);
+    context.arc(window.innerWidth/2,window.innerHeight/2,val*2,0,2*Math.PI);
+    context.stroke();
+}
+
+var drawLineCircle = function(red,green,blue,val)
+{
+    context.beginPath()
+
+    for(var i=0;i<360;i++)
+    {
+        if(i%10==0)
+        {
+            var radians = i * (Math.PI / 180);
+            context.moveTo(window.innerWidth/2,window.innerHeight/2)
+            x = val*2*Math.cos(radians);
+            y =val*2*Math.sin(radians);
+            context.lineTo(x+window.innerWidth/2,y+window.innerHeight/2);
+        }
+
+    }
+
+    context.strokeStyle = 'rgb(' + red+50 + ', ' + green + ', ' + blue + ')';
     context.stroke();
 }
 
@@ -117,7 +123,10 @@ var animate = function()
         var green = 255 - val;
         var blue = val; 
         drawBass(red,green,blue,val)
+        drawLineCircle(red,green,blue,val);
     }
+    context.rotate(0.4);
+   
 
     requestAnimationFrame(animate);
 };
